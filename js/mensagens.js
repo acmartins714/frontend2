@@ -20,7 +20,7 @@ function mostrarMensagens(lista){
 
     let excluidas = JSON.parse(localStorage.getItem("excluidas")) || [];
 
-    lista = lista.filter(msg => !excluidas.includes(msg.email +  msg.mensagem));
+    lista = lista.filter(msg => !excluidas.includes(msg.email + msg.mensagem));
 
     lista.forEach(function(msg, i){
         let linha = document.createElement("tr");
@@ -41,7 +41,7 @@ function mostrarMensagens(lista){
                 <button>Visualizar</button>
                 <button>Excluir</button>
             </td>
-        `;
+        ´;
         
 
         linha.querySelector(".btnVisualizar").addEventListener("click", function(){
