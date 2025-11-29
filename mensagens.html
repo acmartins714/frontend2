@@ -40,7 +40,8 @@
         <h2>Mensagens Recebidas</h2>
       </div>
 
-      <div>
+      <div style="display: inline-block; width: 100%; text-align: center;">
+        <button class="button" onclick="enviarMensagens()">Enviar nova Mensagem</button>
         <button class="button" onclick="atualizarMensagens()">Atualizar</button>
         <button class="button" onclick="logout()">Realizar logout</button>
       </div>
@@ -48,10 +49,10 @@
       <table id="tabelaMensagens">
         <thead>
           <tr>
-            <th >Nome</th>
-            <th>Email</th>
-            <th>Mensagem</th>
-            <th>Ações</th>
+            <th style="width : 25%">Nome</th>
+            <th style="width : 30%">Email</th>
+            <th style="width : 25%">Mensagem</th>
+            <th style="width : 18%">Ações</th>
           </tr>
         </thead>
         <tbody></tbody>

@@ -1,5 +1,6 @@
 window.onload = function(){
     let mensagens = obterMensagens();
+    console.log(mensagens);
     let usuarioLogado = this.localStorage.getItem("usuarioLogado")
 
     if(!usuarioLogado) {
@@ -10,90 +11,118 @@ window.onload = function(){
     if (!mensagens) mensagens = [];
 
     localStorage.setItem("mensagens", JSON.stringify(mensagens));
-
+  
     mostrarMensagens(mensagens);
 };
+
 
 function mostrarMensagens(lista){
     let tabela = document.querySelector("#tabelaMensagens tbody")
     tabela.innerHTML = "";
 
     let excluidas = JSON.parse(localStorage.getItem("excluidas")) || [];
+    let visualizadas = JSON.parse(localStorage.getItem("visualizadas")) || [];
+    
+    lista.forEach(function(listagem, i){
 
-    lista = lista.filter(msg => !excluidas.includes(msg.email + msg.mensagem));
+        if (!excluidas.includes(listagem.id)) {
 
-    lista.forEach(function(msg, i){
-        let linha = document.createElement("tr");
+            let linha = document.createElement("tr");
 
-        let visualizadas = JSON.parse(localStorage.getItem("visualizadas")) || [];
+            let lida = visualizadas.includes(listagem.id);
 
-        let lida = visualizadas.includes(msg.email + msg.mensagem);
+            if (!lida) {
 
-        if (!lida) {
-            linha.classList.add("naoLida");
+                linha.innerHTML = `
+                    <td style="width: 25%; font-weight: bold;">${listagem.nome}</td>
+                    <td style="width: 30%; font-weight: bold;">${listagem.email}</td>
+                    <td style="width: 25%; font-weight: bold;">${listagem.mensagem}</td>
+                    <td style="width: 18%; white-space: nowrap;  text-align: center">
+                        <button class="table-button" id="btnVisualizar">Visualizar</button>
+                        <button class="table-button" id="btnExcluir">Excluir</button>
+                    </td>
+                `;
+            } else {
+                linha.innerHTML = `
+                    <td style="width : 25%">${listagem.nome}</td>
+                    <td style="width : 30%">${listagem.email}</td>
+                    <td style="width : 25%">${listagem.mensagem}</td>
+                    <td style="width : 18%; white-space: nowrap;  text-align: center">
+                        <button class="table-button" id="btnVisualizar">Visualizar</button>
+                        <button class="table-button" id="btnExcluir">Excluir</button>
+                    </td>
+                  `;
+            }
+
+            linha.querySelector("#btnVisualizar").addEventListener("click", function(){
+                if(confirm("Marcar esta mensagem como visualizada?")){
+                    salvarComoLida(listagem);
+                }
+            });
+
+            linha.querySelector("#btnExcluir").addEventListener("click", function(){
+                if(confirm("Tem certeza que deseja excluir esta mensagem?")){
+                    console.log("Identificador do item a ser excluído: " + listagem.id)
+                    excluirMensagem(listagem);
+                }
+            });
+
+            tabela.appendChild(linha);
         }
-
-        linha.innerHTML = `
-            <td>${msg.nome}</td>
-            <td>${msg.email}</td>
-            <td>${msg.mensagem}</td>
-            <td style="white-space: nowrap">
-                <button>Visualizar</button>
-                <button>Excluir</button>
-            </td>
-        ´;
-        
-
-        linha.querySelector(".btnVisualizar").addEventListener("click", function(){
-            if(confirm("Marcar esta mensagem como visualizada?")){
-                linha.classList.remove("naoLida");
-                salvarComoLida(idMensagem);
-            }
-        });
-
-        linha.querySelector(".btnExcluir").addEventListener("click", function(){
-            if(confirm("Tem certeza que deseja excluir esta mensagem?")){
-                excluirMensagem(i);
-                linha.remove();
-            }
-        });
-        tabela.appendChild(linha);
-
-        // linha.addEventListener("click", function(){
-        //     linha.classList.remove("naoLida");
-        //     salvarComoLida(msg);
-        // });
-
-        tabela.appendChild(linha);
-
     });
 };
 
 
 //excluir mensagens
-function excluirMensagem(index) {
-  let mensagens = JSON.parse(localStorage.getItem("mensagens")) || [];
-  let mensagemRemovida = mensagens[index];
-  let idMensagem = mensagemRemovida.email + mensagemRemovida.mensagem;
+function excluirMensagem(msg) {
 
   let excluidas = JSON.parse(localStorage.getItem("excluidas")) || [];
-  excluidas.push(idMensagem);
-  localStorage.setItem("excluidas", JSON.stringify(excluidas));
+  
+  let idMensagem = msg.id;
 
-  mensagens.splice(index, 1);
-  localStorage.setItem("mensagens", JSON.stringify(mensagens));
+  if (!excluidas.includes(idMensagem)) {
+
+    // Adicionar elemento ao final do array de controle das mensagens excluídas
+    excluidas.push(idMensagem);
+
+    // Gravar as mensagens excluídas no localStorage
+    localStorage.setItem("excluidas", JSON.stringify(excluidas));
+
+  } 
+
+  // Atualizar a exibição dos dados na tabela de mensagens
+  atualizarMensagens();
+
 }
 
+
+// Marcar as mesnagens visualizadas
 function salvarComoLida(msg) {
+  
+  // obtem os id´s das mensagens visualizadas
   let visualizadas = JSON.parse(localStorage.getItem("visualizadas")) || [];
-  let idMensagem = msg.email + msg.mensagem;
+
+  // Obtem o valor do id da mensagem visualizada
+  let idMensagem = msg.id;
 
   if (!visualizadas.includes(idMensagem)) {
+
+    // Adiciona identificador da mensagem no final do array de controle de visualizados
     visualizadas.push(idMensagem);
+
+    // Grava no localStorage o array de controle de visualizados
     localStorage.setItem("visualizadas", JSON.stringify(visualizadas));
+
   }
+
+  // Atualizar a exibição dos dados na tabela de mensagens
+  atualizarMensagens();
+
 }   
 
+function enviarMensagens() {
+    window.location.href = "contato.html";
+}    
 
 function atualizarMensagens() {
     let mensagens = obterMensagens();

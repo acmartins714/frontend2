@@ -1,3 +1,16 @@
+// 0. Verificar se o usuário está logado
+
+window.onload = function(){
+
+    let usuarioLogado = this.localStorage.getItem("usuarioLogado")
+
+    if(!usuarioLogado) {
+        alert("Você precisa fazer o login para acessar essa página.")
+        window.location.href = "admin.html";
+    }
+
+};
+
 // 1. Selecionar o formulário e o botão
 const formulario = document.getElementById('formulario-contato');
 const botaoEnviar = document.getElementById('botao-enviar');
