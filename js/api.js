@@ -19,8 +19,10 @@ function obterMensagens() {
 }
 
 function inserirMensagem(mensagem) {
-
-    var inserir = $.ajax({
+    
+    let retorno = false; // Retornar o status da transação
+    
+    let inserir = $.ajax({
 
         url: 'https://app-p2-js-c88e9128234a.herokuapp.com/mensagens',
         method: 'POST',
